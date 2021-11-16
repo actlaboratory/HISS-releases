@@ -1,0 +1,33 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+    tags: [v*]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch:
+          - amd64_x86
+    steps:
+      - name: checkout implementation
+        uses: actions/checkout@v2
+        with:
+          repository: actlaboratory/hiss
+          token: {{ secrets.access_token }}
+      - name: build the addon
+        run: |
+          cd nvda
+          scons
+          echo this is test release >release.txt
+      - name: upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: nvda/release.txt
+
