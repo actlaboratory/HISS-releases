@@ -25,8 +25,6 @@ jobs:
         with:
           python-version: '3.8'
           architecture: 'x86'
-      - name: install scons
-        run: pip install scons
       - name: build the addon
         run: |
           cd nvda
