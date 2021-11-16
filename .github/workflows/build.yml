@@ -22,8 +22,9 @@ jobs:
           token: ${{ secrets.access_token }}
       - name: setup python
         uses: actions/setup-python@v2
-        python-version: '3.8'
-        architecture: 'x86'
+        with:
+          python-version: '3.8'
+          architecture: 'x86'
       - name: install scons
         run: pip install scons
       - name: build the addon
