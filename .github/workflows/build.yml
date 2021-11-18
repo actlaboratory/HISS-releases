@@ -18,6 +18,16 @@ jobs:
         with:
           repository: actlaboratory/hiss
           token: ${{ secrets.access_token }}
+      - name: prepare msvc
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+      - name: build dll
+        run: |
+          cd dll
+          make
+        env:
+          ARCH_NAME: _${{ matrix.arch }}
       - name: setup python
         uses: actions/setup-python@v2
         with:
