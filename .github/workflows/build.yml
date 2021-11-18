@@ -24,6 +24,10 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
+      - name: run unit tests
+        run: |
+          cd tests
+          make
       - name: build dll
         run: |
           cd dll
