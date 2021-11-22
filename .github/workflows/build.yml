@@ -24,23 +24,23 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
-      - name: run unit tests
-        run: |
-          cd tests
-          make
-      - name: build dll
-        run: |
-          cd dll
-          make
-        env:
-          ARCH_NAME: _${{ matrix.arch }}
       - name: setup python
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
           architecture: 'x86'
-      - name: install scons
-        run: pip install scons
+      - name: install python libraries
+        run: pip install scons markdown
+      - name: run unit tests
+        run: |
+          cd tests
+          make
+      - name: run full build
+        run: |
+          make
+        env:
+          ARCH_NAME: _${{ matrix.arch }}
+          CI: 1
       - name: build the addon
         run: |
           cd nvda
