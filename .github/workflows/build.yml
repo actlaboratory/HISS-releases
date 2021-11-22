@@ -36,7 +36,9 @@ jobs:
           cd tests
           make
       - name: run full build
-        run: make
+        run: |
+          chcp 932
+          make
         env:
           ARCH_NAME: _${{ matrix.arch }}
       - name: build the addon
