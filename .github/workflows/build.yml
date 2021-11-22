@@ -37,10 +37,10 @@ jobs:
           make
       - name: run full build
         run: |
-          chcp 932
           make
         env:
           ARCH_NAME: _${{ matrix.arch }}
+          CI: 1
       - name: build the addon
         run: |
           cd nvda
