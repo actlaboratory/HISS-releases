@@ -2,8 +2,8 @@ name: build
 
 on:
   push:
-    branches: [master]
-    tags: [v*]
+    tags:
+      - '*.*.*'
   pull_request:
     branches: [master]
 
@@ -15,6 +15,9 @@ jobs:
         arch:
           - amd64_x86
     steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: checkout implementation
         uses: actions/checkout@v2
         with:
@@ -31,10 +34,6 @@ jobs:
           architecture: 'x86'
       - name: install python libraries
         run: pip install scons markdown
-      - name: run unit tests
-        run: |
-          cd tests
-          make
       - name: run full build
         run: |
           make
