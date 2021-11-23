@@ -2,8 +2,7 @@ name: build
 
 on:
   push:
-    branches: [master]
-    tags: [v*]
+    tags: *
   pull_request:
     branches: [master]
 
@@ -15,6 +14,11 @@ jobs:
         arch:
           - amd64_x86
     steps:
+      name: get tag name
+        id: get_tag_name
+        run: |
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+          echo ${{ steps.get_tag_name.outputs.VERSION }}
       - name: checkout implementation
         uses: actions/checkout@v2
         with:
