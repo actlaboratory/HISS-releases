@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '*.*.*'
-  pull_request:
-    branches: [master]
 
 jobs:
   build:
@@ -22,6 +20,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: actlaboratory/hiss
+          ref: ${{ steps.get_version.outputs.VERSION }}
           token: ${{ secrets.access_token }}
       - name: prepare msvc
         uses: ilammy/msvc-dev-cmd@v1
@@ -40,14 +39,14 @@ jobs:
         env:
           ARCH_NAME: _${{ matrix.arch }}
           CI: 1
-      - name: build the addon
-        run: |
-          cd nvda
-          scons
-          echo this is test release >release.txt
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: package
-          path: nvda/release.txt
-
+          name: HISS-${{ steps.get_version.outputs.VERSION }}.zip
+          path: build/nvda/HISS-${{ steps.get_version.outputs.VERSION }}.zip
+      - name: publish automatic release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: HISS-${{ steps.get_version.outputs.VERSION }}.zip
+          draft: true
+          token: ${{ secrets.GITHUB_TOKEN }}
