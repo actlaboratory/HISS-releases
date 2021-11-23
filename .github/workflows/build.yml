@@ -18,6 +18,8 @@ jobs:
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+      - name: Output the version
+        run: echo ${{ steps.get_version.outputs.VERSION }}
       - name: checkout implementation
         uses: actions/checkout@v2
         with:
@@ -34,10 +36,6 @@ jobs:
           architecture: 'x86'
       - name: install python libraries
         run: pip install scons markdown
-      - name: run unit tests
-        run: |
-          cd tests
-          make
       - name: run full build
         run: |
           make
