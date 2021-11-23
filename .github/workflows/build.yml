@@ -13,16 +13,14 @@ jobs:
         arch:
           - amd64_x86
     steps:
-      - name: Get the version
-        id: get_version
-        run: |
-          echo ref is ${GITHUB_REF}
-          echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/*}
+      - name: Get version
+        uses: olegtarasov/get-tag@v2.1
+        id: tagName
       - name: checkout implementation
         uses: actions/checkout@v2
         with:
           repository: actlaboratory/hiss
-          ref: ${{ steps.get_version.outputs.VERSION }}
+          ref: ${{ steps.tagName.outputs.tag }}
           token: ${{ secrets.access_token }}
       - name: prepare msvc
         uses: ilammy/msvc-dev-cmd@v1
@@ -40,15 +38,14 @@ jobs:
           make
         env:
           ARCH_NAME: _${{ matrix.arch }}
-          CI: 1
       - name: upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: HISS-${{ steps.get_version.outputs.VERSION }}.zip
-          path: build/nvda/HISS-${{ steps.get_version.outputs.VERSION }}.zip
+          name: HISS-${{ steps.tagName.outputs.tag }}.zip
+          path: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip
       - name: publish automatic release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: HISS-${{ steps.get_version.outputs.VERSION }}.zip
+          artifacts: HISS-${{ steps.tagName.outputs.tag }}.zip
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
