@@ -15,11 +15,9 @@ jobs:
         arch:
           - amd64_x86
     steps:
-      - name: get tag name
-        id: get_tag_name
-        run: |
-          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-          echo ${{ steps.get_tag_name.outputs.VERSION }}
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - name: checkout implementation
         uses: actions/checkout@v2
         with:
