@@ -46,6 +46,6 @@ jobs:
       - name: publish automatic release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: HISS-${{ steps.tagName.outputs.tag }}.zip
+          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
