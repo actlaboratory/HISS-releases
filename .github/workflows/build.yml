@@ -33,6 +33,12 @@ jobs:
           architecture: 'x86'
       - name: install python libraries
         run: pip install scons markdown
+      - name: run unit tests
+        run: |
+          cd tests
+          make
+        env:
+          ARCH_NAME: _${{ matrix.arch }}
       - name: run full build
         run: |
           make
