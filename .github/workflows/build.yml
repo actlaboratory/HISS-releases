@@ -46,7 +46,7 @@ jobs:
           ARCH_NAME: _${{ matrix.arch }}
       - name: generate version info JSON
         run: |
-          python make_version_info.py
+          make version_info
       - name: publish automatic release
         uses: ncipollo/release-action@v1
         with:
