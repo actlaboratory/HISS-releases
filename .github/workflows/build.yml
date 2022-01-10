@@ -44,14 +44,12 @@ jobs:
           make
         env:
           ARCH_NAME: _${{ matrix.arch }}
-      - name: upload artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: HISS-${{ steps.tagName.outputs.tag }}.zip
-          path: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip
+      - name: generate version info JSON
+        run: |
+          python make_version_info.py
       - name: publish automatic release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip
+          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip, build/nvda/HISS-${{ steps.tagName.outputs.tag }}.nvda-addon, HISS-${{ steps.tagName.outputs.tag }}_info.json
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
