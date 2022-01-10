@@ -13,6 +13,8 @@ jobs:
         arch:
           - amd64_x86
     steps:
+      - name: set git options
+        run: git config --system core.autocrlf false
       - name: Get version
         uses: olegtarasov/get-tag@v2.1
         id: tagName
