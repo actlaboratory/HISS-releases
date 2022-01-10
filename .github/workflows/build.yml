@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: set git options
         run: |
-          git config --local core.autocrlf false
+          git config --global core.autocrlf false
           git config core.autocrlf
       - name: Get version
         uses: olegtarasov/get-tag@v2.1
