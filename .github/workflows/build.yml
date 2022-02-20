@@ -36,7 +36,10 @@ jobs:
           python-version: '3.8'
           architecture: 'x86'
       - name: install python libraries
-        run: pip install scons markdown
+        run: pip install scons markdown pyinstaller
+      - name: Delete Unwanted Link to Stop It From Interfering
+        run: rm /usr/bin/link.exe
+        shell: bash
       - name: run unit tests
         run: |
           cd tests
@@ -54,6 +57,6 @@ jobs:
       - name: publish automatic release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip, build/nvda/HISS-${{ steps.tagName.outputs.tag }}.nvda-addon, HISS-${{ steps.tagName.outputs.tag }}_info.json
+          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip, build/nvda/HISS-${{ steps.tagName.outputs.tag }}.nvda-addon, HISS-${{ steps.tagName.outputs.tag }}_info.json,build/sapiExtension/dist/sapiExtension.zip
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
