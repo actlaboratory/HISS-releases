@@ -3,7 +3,7 @@ name: build
 on:
   push:
     tags:
-      - '*.*.*'
+      - "*.*.*"
 
 jobs:
   build:
@@ -33,10 +33,10 @@ jobs:
       - name: setup python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
-          architecture: 'x86'
+          python-version: "3.8"
+          architecture: "x86"
       - name: install python libraries
-        run: pip install scons markdown pyinstaller
+        run: pip install scons markdown pyinstaller wxPython
       - name: Delete Unwanted Link to Stop It From Interfering
         run: rm /usr/bin/link.exe
         shell: bash
