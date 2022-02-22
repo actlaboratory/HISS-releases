@@ -36,7 +36,7 @@ jobs:
           python-version: "3.8"
           architecture: "x86"
       - name: install python libraries
-        run: pip install scons markdown pyinstaller wxPython pywin32
+        run: pip install scons markdown pyinstaller wxPython pywin32 pyperclip
       - name: Delete Unwanted Link to Stop It From Interfering
         run: rm /usr/bin/link.exe
         shell: bash
