@@ -26,6 +26,7 @@ jobs:
           repository: actlaboratory/hiss
           ref: ${{ steps.tagName.outputs.tag }}
           token: ${{ secrets.access_token }}
+          submodules: 'recursive'
       - name: prepare msvc
         uses: ilammy/msvc-dev-cmd@v1
         with:
