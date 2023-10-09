@@ -12,6 +12,8 @@ HISSは、株式会社アニモにより提供されている「FineSpeech Versi
 
 HISSは、SAPI経由ではなく、NVDAの音声エンジンの一つとして動作します。NVDAの読み上げに最適化した設定になっているので、キーを入力してから音声が返ってくるまでの時間が短いです。ver1.1.0から、拡張機能として、SAPI5のインターフェイス経由でHISSを利用できるようになりました。
 
+HISSは、ASIOデバイスを直接サポートしています。ASIOプロトコルに対応したオーディオインターフェイスをお持ちの場合は、そのデバイスに直接音声を出力することにより、音声が返ってくるまでの時間をさらに短縮することができます。
+
 NVDAの音声エンジンは、「高速読み上げ」に対応しているものがほとんどです。通常、「高速読み上げ」の設定はチェックボックスで切り替えるようになっていますが、HISSでは、これをスライダーにしています。これにより、細かい速度調整を可能としています。スライダーを最大まで振り切れば、人知を超えた圧倒的な速度を得られます(最大で常用することは想定していません)。
 
 このアドオンを開発した経緯として、コンピュータープログラムを高速で読める音声エンジンがほしかったというのがあります。ということで、プログラミングでよく出てくる用語を、独自の読み辞書に登録してあります。NVDAの読み上げ辞書に入れてもいいのですが、今回はパフォーマンスを優先して、高速に処理できる音声エンジン側に入れています。「HISSならそういう用語を読める」というのを目指しています。
@@ -48,6 +50,8 @@ HISSをインストールするには、NVDAが起動している状態でこの
 体験版には、30分の時間制限があります。時間制限を超過すると、音声出力の最初に信号音が流れるようになります。
 
 体験版は、直近180日間で3回まで開始できます。これを数えているのはコンピューター単位なので、違うコンピューターでは、別々にカウントされます。
+
+ASIO出力機能を体験版でテストする場合は、ASIOの設定をしてから体験版を開始することをお勧めします。NVDAの再起動によって体験版の使用回数を減らさないようにするためです。もし、順番を逆にしてしまった場合は、別の音声エンジンに切り替えた後にHISSに戻すことで、ASIO出力の状態でHISSを利用できます。
 
 ### 製品版を登録
 
@@ -112,6 +116,26 @@ HISSには、独自の設定項目がいくつかあります。以下にその�
 - 不明な単語に推測読みを適用: オンにすると、推測読みを有効にします。HISSとしては読み方を知らないが、明らかに日本語の発音に治せそうな単語を見つけると、独自の推測読みエンジンで読み方を推測します。たとえば、"tanaka"という単語は、推測読みを有効にしていれば「タナカ」と読まれますが、有効にしていなければ"ティーエーエヌエーケーエー"と読まれます。逆にへんな読み方になってしまう場合もあるので、切り替えられるようにしています。
 - 高域を強調: 音声の広域成分を強調して、より刺さる感じの音声になります。スピーカーの性質によって標準の音声が聞き取りにくい場合には、使ってみてください。通常はオンにしなくてもよいと思います。
 
+## ASIO出力の利用
+
+ASIOプロトコルに対応したオーディオインターフェイスがあれば、HISSの音声を直接ASIOで出力することができます。これにより、Windowsのシステムミキサーを経由しなくなるので、超低遅延の音声出力が可能になります。
+
+ASIO出力を設定するには、「NVDAメニュー -> HISS -> ASIOの設定」を実行します。この画面で、利用可能なASIOデバイスを選択してOKボタンを押すと、ASIO出力に切り替えることができます。この設定は保存され、次回以降の起動でも、設定したASIOデバイスに音声出力します。
+
+ASIOの設定を適用するには、NVDAを再起動するか、HISSの音声エンジンを読み込み直す必要があります。
+
+ASIO出力機能を体験版でテストする場合は、ASIOの設定をしてから体験版を開始することをお勧めします。NVDAの再起動によって体験版の使用回数を減らさないようにするためです。もし、順番を逆にしてしまった場合は、別の音声エンジンに切り替えた後にHISSに戻すことで、ASIO出力の状態でHISSを利用できます。
+
+ASIO出力に切り替えると、音声読み上げの音質が若干変化します。これは、HISSが元々出力している音声フォーマットをそのままASIOに流すことができず、変換を挟んでいるからです。そして、その変換アルゴリズムは、速度優先で、最も簡易的な方法を使っています。
+
+ASIO対応デバイスは、1つのアプリケーションからしか同時に利用できないという制限があります。そのため、HISSをASIO出力にしているときに、音楽作成ソフトのようなASIO対応アプリケーションを起動すると、エラーが発生することがあります。逆の順番でも同様です。
+
+ASIO出力中にASIOの設定画面を開くと、現在使っているデバイスは一覧に表示されません。これも、ASIOの排他制御による仕様です。
+
+今のところ、作者の手元にある Yamaha AG06 というインターフェイスでしかテストできていません。たぶん、ほかのデバイスでも動くとは思います。
+
+ASIO出力機能は、HISSがNVDAの上で動作しているときのみ利用できます。SAPI拡張機能では利用できません。
+
 ## SAPI拡張機能の利用
 
 HISSの音声エンジンを、SAPI5経由で利用することができます。これにより、SAPI5音声出力に対応した外部アプリケーションから、HISSを利用できるようになります。なお、SAPI拡張機能をインストールする際に、管理者権限が必要となります。
@@ -123,6 +147,11 @@ SAPI拡張機能は、それ自体が単体のプログラムとして実行さ�
 SAPI拡張機能のインストールプログラムが、Windows Defenderなどのウィルス対策ソフトによってマルウェアと判定されてしまう場合があります。その場合、初回の実行でダウンロードしようとした時点で全力で消しに来るような挙動をします。検疫されたファイルの復元・実行許可を与える必要があるかもしれません。
 
 ## 更新履歴
+
+### 2023/10/09 Version 1.3.0
+
+1. ASIOデバイスへの出力機能を搭載しました。
+2. ユーザー提供を含む辞書データを追加しました。現在、2311単語。
 
 ### 2023/06/01 Version 1.2.5
 
@@ -309,3 +338,12 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+
+ASIO出力部分には、 [PyAudio](https://people.csail.mit.edu/hubert/pyaudio/) を使用しています。
+
+Copyright (c) 2006 Hubert Pham
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
