@@ -51,9 +51,11 @@ jobs:
           make
         env:
           ARCH_NAME: _${{ matrix.arch }}
-      - name: run full build
+      - name: set gettext path
         run: |
           echo $pwd.Path >> $Env:GITHUB_PATH
+      - name: run full build
+        run: |
           make
         env:
           ARCH_NAME: _${{ matrix.arch }}
