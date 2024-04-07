@@ -40,6 +40,8 @@ jobs:
         run: |
           pip install scons markdown pyinstaller
           pip install -r sapiExtension/requirements.txt
+      - name: download gettext tools
+        run: python tools\download_gettext\download_gettext.py
       - name: Delete Unwanted Link to Stop It From Interfering
         run: rm /usr/bin/link.exe
         shell: bash
