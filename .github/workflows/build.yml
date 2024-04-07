@@ -53,6 +53,7 @@ jobs:
           ARCH_NAME: _${{ matrix.arch }}
       - name: run full build
         run: |
+          echo $pwd.Path >> $Env:GITHUB_PATH
           make
         env:
           ARCH_NAME: _${{ matrix.arch }}
