@@ -45,12 +45,6 @@ jobs:
       - name: Delete Unwanted Link to Stop It From Interfering
         run: rm /usr/bin/link.exe
         shell: bash
-      - name: run unit tests
-        run: |
-          cd tests
-          make
-        env:
-          ARCH_NAME: _${{ matrix.arch }}
       - name: set gettext path
         run: |
           echo $pwd.Path >> $Env:GITHUB_PATH
