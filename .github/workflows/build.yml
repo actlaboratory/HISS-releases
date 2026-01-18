@@ -8,18 +8,16 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        arch:
-          - amd64_x86
     steps:
       - name: set git options
         run: |
           git config --global core.autocrlf false
           git config core.autocrlf
+
       - name: Get version
         uses: olegtarasov/get-tag@v2.1
         id: tagName
+
       - name: checkout implementation
         uses: actions/checkout@v2
         with:
@@ -27,32 +25,104 @@ jobs:
           ref: ${{ steps.tagName.outputs.tag }}
           token: ${{ secrets.access_token }}
           submodules: 'recursive'
-      - name: prepare msvc
-        uses: ilammy/msvc-dev-cmd@v1
-        with:
-          arch: ${{ matrix.arch }}
-      - name: setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-          architecture: "x86"
-      - name: install python libraries
+
+      - name: download python 3.8.10 x64 installer
         run: |
-          pip install scons markdown pyinstaller
-          pip install -r sapiExtension/requirements.txt
-      - name: download gettext tools
-        run: python tools\download_gettext\download_gettext.py
+          Write-Host "Downloading Python 3.8.10 x64 installer..."
+          Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe" -OutFile "python-3.8.10-amd64.exe"
+        shell: pwsh
+
+      - name: install python 3.8.10 x64
+        run: |
+          Write-Host "Installing Python 3.8.10 x64..."
+          Start-Process -FilePath "python-3.8.10-amd64.exe" -ArgumentList "/quiet", "InstallAllUsers=0", "PrependPath=1", "Include_test=0" -Wait
+          Write-Host "Python 3.8.10 x64 installation completed"
+        shell: pwsh
+
+      - name: download python 3.8.10 x86 installer
+        run: |
+          Write-Host "Downloading Python 3.8.10 x86 installer..."
+          Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.8.10/python-3.8.10.exe" -OutFile "python-3.8.10.exe"
+        shell: pwsh
+
+      - name: install python 3.8.10 x86
+        run: |
+          Write-Host "Installing Python 3.8.10 x86..."
+          Start-Process -FilePath "python-3.8.10.exe" -ArgumentList "/quiet", "InstallAllUsers=0", "PrependPath=1", "Include_test=0" -Wait
+          Write-Host "Python 3.8.10 x86 installation completed"
+        shell: pwsh
+
       - name: Delete Unwanted Link to Stop It From Interfering
         run: rm /usr/bin/link.exe
         shell: bash
+
+      - name: download gettext tools
+        run: python tools\download_gettext\download_gettext.py
+
       - name: set gettext path
         run: |
           echo $pwd.Path >> $Env:GITHUB_PATH
-      - name: run full build
+
+      - name: download dependencies
         run: |
-          make
-        env:
-          ARCH_NAME: _${{ matrix.arch }}
+          Invoke-WebRequest -Uri "http://nyanchangames.com/hiss-dependencies.zip" -OutFile "hiss-dependencies.zip"
+        shell: pwsh
+
+      - name: place dependencies
+        run: |
+          Expand-Archive -Path "hiss-dependencies.zip" -DestinationPath "temp" -Force
+          Move-Item -Path "temp/hiss-dependencies/x86/*" -Destination "dll/hiss/lib/x86/" -Force
+          Move-Item -Path "temp/hiss-dependencies/x64/*" -Destination "dll/hiss/lib/x64/" -Force
+          Remove-Item -Path "temp" -Recurse -Force
+        shell: pwsh
+
+      - name: create venv.x86
+        run: |
+          Write-Host "Creating x86 virtual environment..."
+          py -3.8-32 -m venv venv.x86
+        shell: pwsh
+
+      - name: install dependencies for venv.x86
+        run: |
+          Write-Host "=== Installing dependencies for venv.x86 ==="
+          .\venv.x86\Scripts\python.exe -m pip install -r requirements.txt
+          .\venv.x86\Scripts\python.exe -m pip install -r sapiExtension\requirements.txt
+        shell: pwsh
+
+      - name: create venv.x64
+        run: |
+          Write-Host "Creating x64 virtual environment..."
+          py -3.8-64 -m venv venv.x64
+        shell: pwsh
+
+      - name: install dependencies for venv.x64
+        run: |
+          Write-Host "=== Installing dependencies for venv.x64 ==="
+          .\venv.x64\Scripts\python.exe -m pip install -r requirements.txt
+          .\venv.x64\Scripts\python.exe -m pip install -r sapiExtension\requirements.txt
+        shell: pwsh
+
+      - name: make cd.init
+        run: make cd.init
+
+      - name: make cd.cpp_x86
+        run: make cd.cpp_x86
+
+      - name: make cd.cpp_x64
+        run: make cd.cpp_x64
+
+      - name: make cd.hookhash
+        run: make cd.hookhash
+
+      - name: make cd.sapiext_x86
+        run: make cd.sapiext_x86
+
+      - name: make cd.sapiext_x64
+        run: make cd.sapiext_x64
+
+      - name: make cd.finalize
+        run: make cd.finalize
+
       - name: generate version info JSON
         run: |
           make version_info
