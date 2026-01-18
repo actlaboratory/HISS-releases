@@ -129,6 +129,6 @@ jobs:
       - name: publish automatic release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip, build/nvda/HISS-${{ steps.tagName.outputs.tag }}.nvda-addon, HISS-${{ steps.tagName.outputs.tag }}_info.json,build/sapiExtension/dist/sapiExtension.zip
+          artifacts: build/nvda/HISS-${{ steps.tagName.outputs.tag }}.zip, build/nvda/HISS-${{ steps.tagName.outputs.tag }}.nvda-addon, HISS-${{ steps.tagName.outputs.tag }}_info.json,build/sapiExtension/dist/sapiExtension_x86.zip,build/sapiExtension/dist/sapiExtension_x64.zip
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
